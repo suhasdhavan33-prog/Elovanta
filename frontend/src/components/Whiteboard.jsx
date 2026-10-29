@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { connectSocket, disconnectSocket } from '../api/socket';
 
-const COLORS = ['#2D2D3A', '#FF6B6B', '#6C63FF', '#4ECDC4', '#FFD93D'];
+const COLORS = ['#2B211B', '#FF7A1A', '#2563EB', '#16A34A', '#E11D48'];
 const WIDTHS = { pen: 3, eraser: 24 };
 
 const drawSegment = (ctx, segment) => {

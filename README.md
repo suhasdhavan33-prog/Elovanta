@@ -19,6 +19,8 @@ iOS + Android app, cloud database, and cloud hosting.
 - **Live Classes**: tutors schedule 1-on-1 video sessions with a student (camera, mic, speaker
   via [Daily.co](https://www.daily.co)), with a shared real-time whiteboard (pen, eraser,
   colors) synced over Socket.io — available on both the website and the mobile app
+- **Session recording**: every live class is recorded to the cloud automatically and saved
+  for both the tutor and the student to rewatch afterward, from the same Sessions page
 
 ## Prerequisites
 
@@ -98,6 +100,19 @@ Classes**, schedule a session with `student@elovanta.com`, then log in as that s
 different browser or incognito window works well for testing both sides at once) and join
 from their Live Classes page. The whiteboard is shared in real time between whichever
 windows/devices have that session open.
+
+### About recording
+
+Every room is created with cloud recording enabled (`enable_recording: 'cloud'`), so the
+tutor can start/stop it from the call controls (the website's embedded Daily call UI shows a
+record button automatically; the mobile app has an explicit "⏺ Record" button). Finished
+recordings show up under that session's **🎬 Recordings** button for both the tutor and the
+student — the backend fetches them from Daily's API on demand, nothing is stored in your own
+database or server.
+
+**Cost note:** Daily's free tier historically does not include cloud recording — check your
+plan on [daily.co/pricing](https://www.daily.co/pricing) before relying on this in
+production; recording minutes and storage may incur charges beyond the free tier.
 
 ## Project structure
 

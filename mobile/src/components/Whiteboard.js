@@ -4,7 +4,7 @@ import Svg, { Line } from 'react-native-svg';
 import { connectSocket, disconnectSocket, getSocket } from '../api/socket';
 import { colors } from '../theme/colors';
 
-const PEN_COLORS = [colors.text, colors.secondary, colors.primary, colors.accent];
+const PEN_COLORS = [colors.text, colors.secondary, '#2563EB', '#16A34A', '#E11D48'];
 const WIDTHS = { pen: 3, eraser: 22 };
 const BOARD_BG = '#ffffff';
 
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
   },
-  toolBtnActive: { borderColor: colors.primary, backgroundColor: '#f0eefc' },
+  toolBtnActive: { borderColor: colors.primary, backgroundColor: '#fff1e2' },
   toolLabel: { fontWeight: '700', fontSize: 12.5, color: colors.text },
   clearBtn: { marginLeft: 'auto' },
   swatchRow: { flexDirection: 'row', gap: 6 },

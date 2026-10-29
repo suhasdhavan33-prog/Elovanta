@@ -14,38 +14,86 @@ const canJoinNow = (session) => {
   return now >= start - 15 * 60 * 1000 && now <= end + 15 * 60 * 1000;
 };
 
+const formatDuration = (seconds) => {
+  if (!seconds) return '';
+  const minutes = Math.round(seconds / 60);
+  return `${minutes} min`;
+};
+
+const SessionRecordings = ({ sessionId }) => {
+  const [recordings, setRecordings] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    api
+      .get(`/sessions/${sessionId}/recordings`)
+      .then((res) => setRecordings(res.data))
+      .catch((err) => setError(err.response?.data?.message || 'Could not load recordings.'));
+  }, [sessionId]);
+
+  if (error) return <div className="form-error">{error}</div>;
+  if (!recordings) return <p className="recordings-loading">Loading recordings...</p>;
+  if (recordings.length === 0) return <p className="recordings-empty">No recordings yet for this session.</p>;
+
+  return (
+    <div className="recordings-list">
+      {recordings.map((r) => (
+        <div key={r.id} className="recording-item">
+          <video controls src={r.downloadUrl} className="recording-player" />
+          <div className="recording-meta">
+            {r.startedAt && <span>{new Date(r.startedAt).toLocaleString()}</span>}
+            {r.durationSeconds && <span>· {formatDuration(r.durationSeconds)}</span>}
+            <a href={r.downloadUrl} download className="recording-download">
+              Download
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const SessionRow = ({ session, isTutor, onCancel }) => {
   const other = isTutor ? session.student : session.tutor;
   const joinable = canJoinNow(session);
+  const [showRecordings, setShowRecordings] = useState(false);
 
   return (
     <div className="session-row">
-      <div>
-        <p className="session-topic">{session.topic}</p>
-        <p className="session-meta">
-          with {other?.name} · {new Date(session.scheduledAt).toLocaleString()} ·{' '}
-          {session.durationMinutes} min
-        </p>
-        <span className={`tag session-status status-${session.status}`}>{session.status}</span>
-      </div>
-      <div className="session-actions">
-        {session.status === 'scheduled' && (
-          <>
-            {joinable ? (
-              <Link className="btn-primary" to={`/sessions/${session._id}/room`}>
-                Join
-              </Link>
-            ) : (
-              <button className="btn-secondary" disabled>
-                Not yet
+      <div className="session-main">
+        <div>
+          <p className="session-topic">{session.topic}</p>
+          <p className="session-meta">
+            with {other?.name} · {new Date(session.scheduledAt).toLocaleString()} ·{' '}
+            {session.durationMinutes} min
+          </p>
+          <span className={`tag session-status status-${session.status}`}>{session.status}</span>
+        </div>
+        <div className="session-actions">
+          {session.status === 'scheduled' && (
+            <>
+              {joinable ? (
+                <Link className="btn-primary" to={`/sessions/${session._id}/room`}>
+                  Join
+                </Link>
+              ) : (
+                <button className="btn-secondary" disabled>
+                  Not yet
+                </button>
+              )}
+              <button className="btn-cancel" onClick={() => onCancel(session._id)}>
+                Cancel
               </button>
-            )}
-            <button className="btn-cancel" onClick={() => onCancel(session._id)}>
-              Cancel
+            </>
+          )}
+          {session.status !== 'cancelled' && (
+            <button className="btn-recordings" onClick={() => setShowRecordings((v) => !v)}>
+              🎬 {showRecordings ? 'Hide' : 'Recordings'}
             </button>
-          </>
-        )}
+          )}
+        </div>
       </div>
+      {showRecordings && <SessionRecordings sessionId={session._id} />}
     </div>
   );
 };
@@ -114,6 +162,10 @@ const Sessions = () => {
   return (
     <div className="page-container">
       <h1>Live Classes 🎥</h1>
+      <p className="info-note">
+        Sessions are recorded automatically and saved for both the tutor and student to watch
+        again afterward. Recordings appear under each session a few minutes after it ends.
+      </p>
 
       {isTutor && (
         <form className="admin-form" onSubmit={handleSubmit}>

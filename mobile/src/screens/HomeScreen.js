@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   header: { alignItems: 'center', marginBottom: 20 },
   eyebrow: {
     alignSelf: 'flex-start',
-    backgroundColor: '#f0eefc',
+    backgroundColor: '#fff1e2',
     color: colors.primaryDark,
     fontWeight: '700',
     fontSize: 12,

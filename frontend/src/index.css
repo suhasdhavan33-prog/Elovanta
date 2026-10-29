@@ -1,12 +1,12 @@
 :root {
-  --primary: #6c63ff;
-  --primary-dark: #4b45c6;
-  --secondary: #ff6b6b;
-  --accent: #4ecdc4;
-  --bg: #fef9f0;
-  --text: #2d2d3a;
+  --primary: #d9480f;
+  --primary-dark: #a83800;
+  --secondary: #ff7a1a;
+  --accent: #ffa94d;
+  --bg: #fff8f2;
+  --text: #2b211b;
   --card-bg: #ffffff;
-  --border: #eee0cc;
+  --border: #ffe1c2;
   --success: #2ecc71;
   --danger: #e74c3c;
 }
@@ -105,7 +105,7 @@ a {
   gap: 0.5rem;
   text-align: center;
   padding: 1.5rem;
-  color: #888;
+  color: #8a7568;
   font-size: 0.9rem;
 }
 
@@ -156,7 +156,7 @@ a {
 
 .hero-eyebrow {
   display: inline-block;
-  background: #f0eefc;
+  background: #fff1e2;
   color: var(--primary-dark);
   font-weight: 700;
   font-size: 0.85rem;
@@ -323,7 +323,7 @@ a {
 }
 
 .tag {
-  background: #f0eefc;
+  background: #fff1e2;
   color: var(--primary-dark);
   border-radius: 999px;
   padding: 0.25rem 0.8rem;
@@ -333,8 +333,8 @@ a {
 }
 
 .tag-age {
-  background: #e6faf8;
-  color: #1a8a80;
+  background: #ffead5;
+  color: #b85c00;
 }
 
 .course-header {
@@ -421,10 +421,10 @@ a {
 }
 
 .info-note {
-  background: #fff8e1;
+  background: #fff3dc;
   border-radius: 12px;
   padding: 1rem;
-  color: #8a6d00;
+  color: #7a4a00;
 }
 
 .quiz-box {
@@ -462,7 +462,7 @@ a {
 
 .quiz-option.selected {
   border-color: var(--primary);
-  background: #f0eefc;
+  background: #fff1e2;
 }
 
 .quiz-option.correct {
@@ -532,7 +532,7 @@ a {
 }
 
 .demo-hint {
-  background: #f0eefc;
+  background: #fff1e2;
   padding: 0.75rem;
   border-radius: 10px;
   font-size: 0.85rem;
@@ -564,7 +564,7 @@ a {
 
 .stat-label {
   font-size: 0.9rem;
-  color: #777;
+  color: #8a7568;
 }
 
 .progress-table {
@@ -583,7 +583,7 @@ a {
 }
 
 .progress-table th {
-  background: #f7f4ff;
+  background: #fff3e6;
 }
 
 .progress-bar-track {
@@ -676,7 +676,7 @@ a {
 
 .admin-form button[type='button'] {
   align-self: flex-start;
-  background: #f0eefc;
+  background: #fff1e2;
   border: none;
   padding: 0.4rem 0.9rem;
   border-radius: 8px;
@@ -750,7 +750,7 @@ a {
 
 .admin-list-actions button {
   border: none;
-  background: #f0eefc;
+  background: #fff1e2;
   padding: 0.35rem 0.75rem;
   border-radius: 8px;
   cursor: pointer;
@@ -784,13 +784,19 @@ a {
 
 .session-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.9rem;
   background: var(--card-bg);
   border-radius: 16px;
   padding: 1rem 1.25rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.session-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -801,7 +807,7 @@ a {
 }
 
 .session-meta {
-  color: #777;
+  color: #8a7568;
   font-size: 0.85rem;
   margin: 0 0 0.4rem;
 }
@@ -811,12 +817,12 @@ a {
 }
 
 .status-scheduled {
-  background: #e6faf8;
-  color: #1a8a80;
+  background: #ffead5;
+  color: #b85c00;
 }
 
 .status-completed {
-  background: #f0eefc;
+  background: #fff1e2;
   color: var(--primary-dark);
 }
 
@@ -841,12 +847,64 @@ a {
   cursor: pointer;
 }
 
+.btn-recordings {
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--primary-dark);
+  font-weight: 700;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.recordings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.recording-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.recording-player {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 12px;
+  background: #000;
+}
+
+.recording-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #8a7568;
+}
+
+.recording-download {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.recordings-loading,
+.recordings-empty {
+  color: #8a7568;
+  font-size: 0.9rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
 .tutor-manager {
   margin-top: 2.5rem;
 }
 
 .tutor-email {
-  color: #777;
+  color: #8a7568;
   font-size: 0.9rem;
 }
 
@@ -922,7 +980,7 @@ a {
 
 .wb-tool.active {
   border-color: var(--primary);
-  background: #f0eefc;
+  background: #fff1e2;
   color: var(--primary-dark);
 }
 

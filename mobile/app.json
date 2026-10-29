@@ -20,7 +20,7 @@
       "package": "com.elovanta.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#6C63FF"
+        "backgroundColor": "#FF7A1A"
       },
       "permissions": ["CAMERA", "RECORD_AUDIO", "MODIFY_AUDIO_SETTINGS"]
     },
@@ -34,7 +34,7 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 220,
           "resizeMode": "contain",
-          "backgroundColor": "#FEF9F0"
+          "backgroundColor": "#FFF8F2"
         }
       ],
       [

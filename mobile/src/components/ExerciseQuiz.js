@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   optionText: { color: colors.text, fontSize: 15 },
-  selected: { borderColor: colors.primary, backgroundColor: '#f0eefc' },
+  selected: { borderColor: colors.primary, backgroundColor: '#fff1e2' },
   correct: { borderColor: colors.success, backgroundColor: '#e9fbf0' },
   incorrect: { borderColor: colors.danger, backgroundColor: '#fdeceb' },
   result: { marginTop: 10, fontWeight: '700', fontSize: 17, color: colors.primaryDark },

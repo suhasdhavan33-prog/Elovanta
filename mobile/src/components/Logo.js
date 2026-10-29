@@ -6,8 +6,8 @@ export const LogoMark = ({ size = 36 }) => (
   <Svg width={size} height={size} viewBox="0 0 100 100">
     <Defs>
       <LinearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-        <Stop offset="0%" stopColor={colors.primary} />
-        <Stop offset="100%" stopColor={colors.accent} />
+        <Stop offset="0%" stopColor="#FF7A1A" />
+        <Stop offset="100%" stopColor="#A83800" />
       </LinearGradient>
     </Defs>
     <Rect x="0" y="0" width="100" height="100" rx="24" fill="url(#grad)" />

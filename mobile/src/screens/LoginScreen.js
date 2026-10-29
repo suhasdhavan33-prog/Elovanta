@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   submitRow: { marginTop: 10 },
   switch: { textAlign: 'center', marginTop: 18, color: colors.text },
   link: { color: colors.primaryDark, fontWeight: '700' },
-  hint: { backgroundColor: '#f0eefc', borderRadius: 10, padding: 12, marginTop: 24 },
+  hint: { backgroundColor: '#fff1e2', borderRadius: 10, padding: 12, marginTop: 24 },
   hintTitle: { fontWeight: '700', marginBottom: 6, color: colors.text },
   hintText: { fontSize: 12.5, color: colors.text, lineHeight: 18 },
 });

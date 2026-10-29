@@ -59,7 +59,7 @@ const run = async () => {
     minAge: 4,
     maxAge: 7,
     icon: '🔤',
-    thumbnailColor: '#FF6B6B',
+    thumbnailColor: '#FF7A1A',
     order: 1,
   });
 
@@ -70,7 +70,7 @@ const run = async () => {
     minAge: 5,
     maxAge: 9,
     icon: '🔊',
-    thumbnailColor: '#4ECDC4',
+    thumbnailColor: '#FFA94D',
     order: 2,
   });
 
@@ -81,7 +81,7 @@ const run = async () => {
     minAge: 8,
     maxAge: 14,
     icon: '📖',
-    thumbnailColor: '#FFD93D',
+    thumbnailColor: '#A83800',
     order: 3,
   });
 

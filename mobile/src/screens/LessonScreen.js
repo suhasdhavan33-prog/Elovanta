@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 14,
   },
-  note: { backgroundColor: '#fff8e1', color: '#8a6d00', borderRadius: 12, padding: 14, marginTop: 18 },
+  note: { backgroundColor: '#fff3dc', color: '#7a4a00', borderRadius: 12, padding: 14, marginTop: 18 },
 });
 
 export default LessonScreen;

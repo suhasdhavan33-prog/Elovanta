@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, Linking, StyleSheet } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import LoadingView from '../components/LoadingView';
 import PrimaryButton from '../components/PrimaryButton';
@@ -17,9 +17,51 @@ const canJoinNow = (session) => {
   return now >= start - 15 * 60 * 1000 && now <= end + 15 * 60 * 1000;
 };
 
+const formatDuration = (seconds) => {
+  if (!seconds) return '';
+  return `${Math.round(seconds / 60)} min`;
+};
+
+const SessionRecordings = ({ sessionId }) => {
+  const [recordings, setRecordings] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    api
+      .get(`/sessions/${sessionId}/recordings`)
+      .then((res) => setRecordings(res.data))
+      .catch((err) => setError(err.response?.data?.message || 'Could not load recordings.'));
+  }, [sessionId]);
+
+  if (error) return <Text style={styles.recordingsError}>{error}</Text>;
+  if (!recordings) return <Text style={styles.recordingsNote}>Loading recordings...</Text>;
+  if (recordings.length === 0) {
+    return <Text style={styles.recordingsNote}>No recordings yet for this session.</Text>;
+  }
+
+  return (
+    <View style={styles.recordingsList}>
+      {recordings.map((r) => (
+        <Pressable
+          key={r.id}
+          style={styles.recordingItem}
+          onPress={() => Linking.openURL(r.downloadUrl)}
+        >
+          <Text style={styles.recordingLabel}>▶️ Play recording</Text>
+          <Text style={styles.recordingMeta}>
+            {r.startedAt ? new Date(r.startedAt).toLocaleString() : ''}
+            {r.durationSeconds ? ` · ${formatDuration(r.durationSeconds)}` : ''}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+};
+
 const SessionRow = ({ session, isTutor, onJoin, onCancel }) => {
   const other = isTutor ? session.student : session.tutor;
   const joinable = canJoinNow(session);
+  const [showRecordings, setShowRecordings] = useState(false);
 
   return (
     <View style={styles.row}>
@@ -29,20 +71,30 @@ const SessionRow = ({ session, isTutor, onJoin, onCancel }) => {
         {session.durationMinutes} min
       </Text>
       <Text style={[styles.statusPill, styles[`status_${session.status}`]]}>{session.status}</Text>
-      {session.status === 'scheduled' && (
-        <View style={styles.actions}>
-          <Pressable
-            disabled={!joinable}
-            onPress={() => onJoin(session._id)}
-            style={[styles.joinBtn, !joinable && styles.joinBtnDisabled]}
-          >
-            <Text style={styles.joinBtnText}>{joinable ? 'Join' : 'Not yet'}</Text>
+      <View style={styles.actions}>
+        {session.status === 'scheduled' && (
+          <>
+            <Pressable
+              disabled={!joinable}
+              onPress={() => onJoin(session._id)}
+              style={[styles.joinBtn, !joinable && styles.joinBtnDisabled]}
+            >
+              <Text style={styles.joinBtnText}>{joinable ? 'Join' : 'Not yet'}</Text>
+            </Pressable>
+            <Pressable onPress={() => onCancel(session._id)} style={styles.cancelBtn}>
+              <Text style={styles.cancelBtnText}>Cancel</Text>
+            </Pressable>
+          </>
+        )}
+        {session.status !== 'cancelled' && (
+          <Pressable onPress={() => setShowRecordings((v) => !v)} style={styles.recordingsBtn}>
+            <Text style={styles.recordingsBtnText}>
+              🎬 {showRecordings ? 'Hide' : 'Recordings'}
+            </Text>
           </Pressable>
-          <Pressable onPress={() => onCancel(session._id)} style={styles.cancelBtn}>
-            <Text style={styles.cancelBtnText}>Cancel</Text>
-          </Pressable>
-        </View>
-      )}
+        )}
+      </View>
+      {showRecordings && <SessionRecordings sessionId={session._id} />}
     </View>
   );
 };
@@ -116,6 +168,10 @@ const SessionsScreen = ({ navigation }) => {
   return (
     <ScreenContainer>
       <Text style={styles.title}>Live Classes 🎥</Text>
+      <Text style={styles.note}>
+        Sessions are recorded automatically and saved for both the tutor and student to watch
+        again afterward.
+      </Text>
 
       {isTutor && (
         <View style={styles.form}>
@@ -218,8 +274,8 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: 'hidden',
   },
-  status_scheduled: { backgroundColor: '#e6faf8', color: '#1a8a80' },
-  status_completed: { backgroundColor: '#f0eefc', color: colors.primaryDark },
+  status_scheduled: { backgroundColor: '#ffead5', color: '#b85c00' },
+  status_completed: { backgroundColor: '#fff1e2', color: colors.primaryDark },
   status_cancelled: { backgroundColor: '#fdeceb', color: colors.danger },
   actions: { flexDirection: 'row', gap: 10, marginTop: 10 },
   joinBtn: { backgroundColor: colors.secondary, borderRadius: 999, paddingVertical: 8, paddingHorizontal: 16 },
@@ -227,6 +283,27 @@ const styles = StyleSheet.create({
   joinBtnText: { color: '#fff', fontWeight: '700' },
   cancelBtn: { backgroundColor: '#fdeceb', borderRadius: 999, paddingVertical: 8, paddingHorizontal: 16 },
   cancelBtnText: { color: colors.danger, fontWeight: '700' },
+  recordingsBtn: {
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: colors.border,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  recordingsBtnText: { color: colors.primaryDark, fontWeight: '700', fontSize: 12.5 },
+  recordingsList: {
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    gap: 8,
+  },
+  recordingItem: { backgroundColor: '#fff1e2', borderRadius: 10, padding: 10 },
+  recordingLabel: { fontWeight: '700', color: colors.primaryDark },
+  recordingMeta: { color: colors.muted, fontSize: 11.5, marginTop: 2 },
+  recordingsNote: { color: colors.muted, fontSize: 12.5, marginTop: 10 },
+  recordingsError: { color: colors.danger, fontSize: 12.5, marginTop: 10 },
 });
 
 export default SessionsScreen;

@@ -10,7 +10,7 @@ const emptyCourse = {
   minAge: 4,
   maxAge: 14,
   icon: '📘',
-  thumbnailColor: '#6C63FF',
+  thumbnailColor: '#FF7A1A',
   order: 0,
 };
 

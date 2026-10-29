@@ -11,7 +11,7 @@ const courseSchema = new mongoose.Schema(
     },
     minAge: { type: Number, required: true, default: 4 },
     maxAge: { type: Number, required: true, default: 14 },
-    thumbnailColor: { type: String, default: '#6C63FF' },
+    thumbnailColor: { type: String, default: '#FF7A1A' },
     icon: { type: String, default: '📘' },
     order: { type: Number, default: 0 },
   },

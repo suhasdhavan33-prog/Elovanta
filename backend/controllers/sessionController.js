@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 const LiveSession = require('../models/LiveSession');
 const User = require('../models/User');
-const { createRoom, deleteRoom, createMeetingToken } = require('../config/daily');
+const {
+  createRoom,
+  deleteRoom,
+  createMeetingToken,
+  listRecordings,
+  getRecordingAccessLink,
+} = require('../config/daily');
 
 const GRACE_SECONDS = 15 * 60;
 
@@ -88,7 +94,35 @@ const getJoinInfo = async (req, res) => {
       expUnixSeconds,
     });
 
-    res.json({ roomUrl: session.dailyRoomUrl, token, session });
+    res.json({ roomUrl: session.dailyRoomUrl, token, isTutor, session });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+const getRecordings = async (req, res) => {
+  try {
+    const session = await LiveSession.findById(req.params.id);
+    if (!session) return res.status(404).json({ message: 'Session not found' });
+
+    const isParticipant = session.tutor.equals(req.user._id) || session.student.equals(req.user._id);
+    if (!isParticipant) {
+      return res.status(403).json({ message: 'You are not part of this session' });
+    }
+
+    const recordings = await listRecordings(session.dailyRoomName);
+    const finished = recordings.filter((r) => r.status === 'finished');
+
+    const withLinks = await Promise.all(
+      finished.map(async (r) => ({
+        id: r.id,
+        startedAt: r.start_ts ? new Date(r.start_ts * 1000) : null,
+        durationSeconds: r.duration,
+        downloadUrl: await getRecordingAccessLink(r.id),
+      }))
+    );
+
+    res.json(withLinks);
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
   }
@@ -114,4 +148,4 @@ const cancelSession = async (req, res) => {
   }
 };
 
-module.exports = { createSession, getMySessions, getJoinInfo, cancelSession };
+module.exports = { createSession, getMySessions, getJoinInfo, getRecordings, cancelSession };

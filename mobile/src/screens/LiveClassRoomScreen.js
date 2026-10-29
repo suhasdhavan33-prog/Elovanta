@@ -14,6 +14,8 @@ const LiveClassRoomScreen = ({ route, navigation }) => {
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
   const [view, setView] = useState('call');
+  const [isTutor, setIsTutor] = useState(false);
+  const [recording, setRecording] = useState(false);
   const callRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ const LiveClassRoomScreen = ({ route, navigation }) => {
       try {
         const { data } = await api.get(`/sessions/${id}/join`);
         if (!active) return;
+        setIsTutor(!!data.isTutor);
 
         const callObject = Daily.createCallObject();
         callRef.current = callObject;
@@ -34,6 +37,8 @@ const LiveClassRoomScreen = ({ route, navigation }) => {
         callObject.on('participant-updated', updateParticipants);
         callObject.on('participant-joined', updateParticipants);
         callObject.on('participant-left', updateParticipants);
+        callObject.on('recording-started', () => setRecording(true));
+        callObject.on('recording-stopped', () => setRecording(false));
 
         await callObject.join({ url: data.roomUrl, token: data.token });
         updateParticipants();
@@ -75,6 +80,14 @@ const LiveClassRoomScreen = ({ route, navigation }) => {
     navigation.goBack();
   };
 
+  const toggleRecording = () => {
+    if (recording) {
+      callRef.current?.stopRecording();
+    } else {
+      callRef.current?.startRecording();
+    }
+  };
+
   if (loading) return <LoadingView label="Connecting to your live class..." />;
 
   if (error) {
@@ -107,6 +120,11 @@ const LiveClassRoomScreen = ({ route, navigation }) => {
         >
           <Text style={styles.switchLabel}>🖊️ Whiteboard</Text>
         </Pressable>
+        {recording && (
+          <View style={styles.recordingBadge}>
+            <Text style={styles.recordingBadgeText}>⏺ Recording</Text>
+          </View>
+        )}
       </View>
 
       {view === 'call' ? (
@@ -144,6 +162,11 @@ const LiveClassRoomScreen = ({ route, navigation }) => {
         <Pressable onPress={toggleCamera} style={[styles.controlBtn, cameraOff && styles.controlBtnOff]}>
           <Text style={styles.controlLabel}>{cameraOff ? '📷 Turn on' : '📷 Turn off'}</Text>
         </Pressable>
+        {isTutor && (
+          <Pressable onPress={toggleRecording} style={[styles.controlBtn, recording && styles.controlBtnOff]}>
+            <Text style={styles.controlLabel}>{recording ? '⏹ Stop rec.' : '⏺ Record'}</Text>
+          </Pressable>
+        )}
         <Pressable onPress={leaveCall} style={[styles.controlBtn, styles.leaveBtn]}>
           <Text style={styles.leaveLabel}>Leave</Text>
         </Pressable>
@@ -162,9 +185,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 8,
   },
-  switchBtn: { borderRadius: 999, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: '#f0eefc' },
+  switchBtn: { borderRadius: 999, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: '#fff1e2' },
   switchBtnActive: { backgroundColor: colors.primary },
   switchLabel: { fontWeight: '700', color: colors.primaryDark },
+  recordingBadge: {
+    marginLeft: 'auto',
+    backgroundColor: colors.danger,
+    borderRadius: 999,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+  },
+  recordingBadgeText: { color: '#fff', fontWeight: '700', fontSize: 12 },
   videoArea: { flex: 1, backgroundColor: '#111' },
   remoteVideo: { flex: 1 },
   localVideo: {
@@ -187,14 +219,14 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.surface,
   },
-  controlBtn: { backgroundColor: '#f0eefc', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 16 },
+  controlBtn: { backgroundColor: '#fff1e2', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 16 },
   controlBtnOff: { backgroundColor: '#fdeceb' },
   controlLabel: { fontWeight: '700', color: colors.primaryDark },
   leaveBtn: { backgroundColor: colors.danger },
   leaveLabel: { fontWeight: '700', color: '#fff' },
   errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: colors.bg },
   errorText: { color: colors.danger, textAlign: 'center', marginBottom: 16, fontSize: 15 },
-  backBtn: { backgroundColor: '#f0eefc', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 20 },
+  backBtn: { backgroundColor: '#fff1e2', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 20 },
   backBtnText: { color: colors.primaryDark, fontWeight: '700' },
 });
 

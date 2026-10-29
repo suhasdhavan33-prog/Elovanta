@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   logout: {
     marginTop: 10,
     alignSelf: 'center',
-    backgroundColor: '#f0eefc',
+    backgroundColor: '#fff1e2',
     borderRadius: 999,
     paddingVertical: 10,
     paddingHorizontal: 20,

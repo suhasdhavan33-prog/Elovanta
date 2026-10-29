@@ -42,6 +42,7 @@ const createRoom = async (name, expUnixSeconds) => {
         enable_chat: true,
         start_video_off: false,
         start_audio_off: false,
+        enable_recording: 'cloud',
       },
     }),
   });
@@ -70,4 +71,20 @@ const createMeetingToken = async (roomName, { userName, isOwner, expUnixSeconds 
   return data.token;
 };
 
-module.exports = { createRoom, deleteRoom, createMeetingToken };
+const listRecordings = async (roomName) => {
+  const data = await dailyRequest(`/recordings?room_name=${encodeURIComponent(roomName)}&limit=50`);
+  return data.data || [];
+};
+
+const getRecordingAccessLink = async (recordingId) => {
+  const data = await dailyRequest(`/recordings/${recordingId}/access-link`);
+  return data.download_link;
+};
+
+module.exports = {
+  createRoom,
+  deleteRoom,
+  createMeetingToken,
+  listRecordings,
+  getRecordingAccessLink,
+};

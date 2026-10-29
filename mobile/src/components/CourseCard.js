@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   description: { color: colors.muted, fontSize: 14, lineHeight: 20 },
   metaRow: { flexDirection: 'row', gap: 8, marginTop: 10 },
   tag: {
-    backgroundColor: '#f0eefc',
+    backgroundColor: '#fff1e2',
     color: colors.primaryDark,
     borderRadius: 999,
     paddingVertical: 4,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     overflow: 'hidden',
   },
-  tagAge: { backgroundColor: '#e6faf8', color: '#1a8a80' },
+  tagAge: { backgroundColor: '#ffead5', color: '#b85c00' },
 });
 
 export default CourseCard;
