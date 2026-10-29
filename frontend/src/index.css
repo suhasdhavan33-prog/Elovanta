@@ -772,3 +772,191 @@ a {
   font-size: 4rem;
   color: var(--primary);
 }
+
+/* Sessions / live classes */
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+}
+
+.session-topic {
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.2rem;
+}
+
+.session-meta {
+  color: #777;
+  font-size: 0.85rem;
+  margin: 0 0 0.4rem;
+}
+
+.session-status {
+  text-transform: capitalize;
+}
+
+.status-scheduled {
+  background: #e6faf8;
+  color: #1a8a80;
+}
+
+.status-completed {
+  background: #f0eefc;
+  color: var(--primary-dark);
+}
+
+.status-cancelled {
+  background: #fdeceb;
+  color: var(--danger);
+}
+
+.session-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-cancel {
+  border: none;
+  background: #fdeceb;
+  color: var(--danger);
+  font-weight: 700;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tutor-manager {
+  margin-top: 2.5rem;
+}
+
+.tutor-email {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* Live class room: video + whiteboard */
+
+.live-room {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+
+.live-room-header {
+  margin-bottom: 1rem;
+}
+
+.live-room-header h1 {
+  margin: 0.4rem 0 0;
+}
+
+.live-room-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .live-room-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.video-call-wrap {
+  background: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+
+.video-call-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.whiteboard {
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.whiteboard-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.wb-tool {
+  border: 2px solid var(--border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.wb-tool.active {
+  border-color: var(--primary);
+  background: #f0eefc;
+  color: var(--primary-dark);
+}
+
+.wb-clear {
+  margin-left: auto;
+}
+
+.wb-colors {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.wb-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.wb-swatch.active {
+  border-color: var(--text);
+}
+
+.whiteboard-canvas-wrap {
+  flex: 1;
+  min-height: 360px;
+  background: #fff;
+}
+
+.whiteboard-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}

@@ -10,6 +10,8 @@ import CourseDetail from './pages/CourseDetail';
 import LessonPage from './pages/LessonPage';
 import Dashboard from './pages/Dashboard';
 import AdminPanel from './pages/AdminPanel';
+import Sessions from './pages/Sessions';
+import LiveClassRoom from './pages/LiveClassRoom';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -36,6 +38,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['student', 'parent']}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute>
+                <Sessions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sessions/:id/room"
+            element={
+              <ProtectedRoute>
+                <LiveClassRoom />
               </ProtectedRoute>
             }
           />

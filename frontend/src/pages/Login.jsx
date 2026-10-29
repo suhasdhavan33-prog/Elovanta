@@ -56,6 +56,8 @@ const Login = () => {
           Parent: parent@elovanta.com / parent123
           <br />
           Admin: admin@elovanta.com / admin123
+          <br />
+          Tutor: tutor@elovanta.com / tutor123
         </div>
       </form>
     </div>

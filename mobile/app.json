@@ -10,14 +10,19 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.elovanta.app"
+      "bundleIdentifier": "com.elovanta.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Elovanta needs your camera so your tutor can see you during live classes.",
+        "NSMicrophoneUsageDescription": "Elovanta needs your microphone so you can talk during live classes."
+      }
     },
     "android": {
       "package": "com.elovanta.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#6C63FF"
-      }
+      },
+      "permissions": ["CAMERA", "RECORD_AUDIO", "MODIFY_AUDIO_SETTINGS"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +35,13 @@
           "imageWidth": 220,
           "resizeMode": "contain",
           "backgroundColor": "#FEF9F0"
+        }
+      ],
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "Elovanta needs your camera so your tutor can see you during live classes.",
+          "microphonePermission": "Elovanta needs your microphone so you can talk during live classes."
         }
       ]
     ],

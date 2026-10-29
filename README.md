@@ -11,11 +11,14 @@ iOS + Android app, cloud database, and cloud hosting.
 
 ## Features
 
-- Student, Parent, and Admin accounts (JWT-based auth) — shared by the website and mobile app
+- Student, Parent, Tutor, and Admin accounts (JWT-based auth) — shared by the website and mobile app
 - Course catalog by category (phonics, sounds, reading, vocabulary, grammar) and age range
 - Lessons with text content, "read aloud" buttons (text-to-speech), and multiple-choice quizzes
 - Progress tracking per student, with a parent dashboard to view a linked child's progress
-- Admin panel (website only) to create/edit/delete courses, lessons, and quiz questions
+- Admin panel (website only) to create/edit/delete courses, lessons, quiz questions, and tutor accounts
+- **Live Classes**: tutors schedule 1-on-1 video sessions with a student (camera, mic, speaker
+  via [Daily.co](https://www.daily.co)), with a shared real-time whiteboard (pen, eraser,
+  colors) synced over Socket.io — available on both the website and the mobile app
 
 ## Prerequisites
 
@@ -66,9 +69,35 @@ The site will be available at **http://localhost:5173**.
 | Admin   | admin@elovanta.com       | admin123    |
 | Parent  | parent@elovanta.com      | parent123   |
 | Student | student@elovanta.com     | student123  |
+| Tutor   | tutor@elovanta.com       | tutor123    |
 
 The seeded student account is already linked to the seeded parent account, so logging in
-as the parent will show that student's progress on the Parent Dashboard.
+as the parent will show that student's progress on the Parent Dashboard. Tutor accounts
+can't be created through public sign-up — an admin creates them from the Admin Panel's
+Tutors section.
+
+## Live Classes Setup (Daily.co)
+
+Live video classes use [Daily.co](https://www.daily.co) for the actual camera/mic/speaker
+call. Without this configured, scheduling a session returns a clear error instead of
+working — everything else in the app functions normally without it.
+
+1. Sign up free at [dashboard.daily.co/signup](https://dashboard.daily.co/signup) (no credit
+   card required for the free tier — 10,000 participant-minutes/month).
+2. Go to **Developers** in the left sidebar → copy your **API key**.
+3. Add it to `backend/.env`:
+   ```
+   DAILY_API_KEY=your_key_here
+   ```
+4. Restart the backend (`npm run dev`). That's it — the backend creates a private Daily room
+   per scheduled session and a short-lived join token per participant automatically; you
+   never touch the Daily dashboard for day-to-day use.
+
+To test it: log in as the seeded tutor (`tutor@elovanta.com` / `tutor123`), go to **Live
+Classes**, schedule a session with `student@elovanta.com`, then log in as that student (a
+different browser or incognito window works well for testing both sides at once) and join
+from their Live Classes page. The whiteboard is shared in real time between whichever
+windows/devices have that session open.
 
 ## Project structure
 
@@ -77,26 +106,29 @@ online-tutoring-platform/
   render.yaml                Render Blueprint (optional one-click backend deploy)
   backend/
     config/db.js            MongoDB connection
-    models/                 User, Course, Lesson, Progress schemas
+    config/daily.js          Daily.co REST API helper (rooms, meeting tokens)
+    models/                 User, Course, Lesson, Progress, LiveSession schemas
     controllers/             Request handlers
     routes/                  Express routers
     middleware/auth.js       JWT auth + role guard
+    sockets/whiteboard.js    Socket.io: real-time whiteboard sync per session
     seed/seedData.js         Sample data loader
-    server.js                App entry point
+    server.js                App entry point (HTTP + Socket.io on one server)
   frontend/
     vercel.json              SPA routing rewrite for Vercel
     src/
       api/axios.js           Axios instance with auth header
+      api/socket.js           Socket.io client for the whiteboard
       context/AuthContext.jsx Global auth state
-      components/            Reusable UI pieces
-      pages/                  Route-level pages
+      components/            Reusable UI pieces (incl. Whiteboard, VideoCall, TutorManager)
+      pages/                  Route-level pages (incl. Sessions, LiveClassRoom)
       App.jsx, main.jsx       App shell & router setup
   mobile/                    React Native (Expo) app for iOS + Android — see mobile/README.md
     app.json, eas.json        Expo config + cloud build/submit profiles
     src/
       api/, context/, theme/   Same roles as the frontend's equivalents
       components/, screens/    Native UI, mirroring the website's pages
-      navigation/               Bottom tabs (Home / Courses / Account), each with its own stack
+      navigation/               Bottom tabs (Home / Courses / Sessions / Account), each with its own stack
 ```
 
 ## Opening in Visual Studio Code

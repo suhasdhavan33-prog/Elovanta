@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Course = require('../models/Course');
 const Lesson = require('../models/Lesson');
 const Progress = require('../models/Progress');
+const LiveSession = require('../models/LiveSession');
 
 const run = async () => {
   await connectDB();
@@ -15,6 +16,7 @@ const run = async () => {
     Course.deleteMany({}),
     Lesson.deleteMany({}),
     Progress.deleteMany({}),
+    LiveSession.deleteMany({}),
   ]);
 
   console.log('Creating users...');
@@ -39,6 +41,13 @@ const run = async () => {
     role: 'student',
     age: 6,
     parent: parent._id,
+  });
+
+  const tutor = await User.create({
+    name: 'Sample Tutor',
+    email: 'tutor@elovanta.com',
+    password: 'tutor123',
+    role: 'tutor',
   });
 
   console.log('Creating courses and lessons...');
@@ -153,6 +162,7 @@ const run = async () => {
   console.log('Admin login: admin@elovanta.com / admin123');
   console.log('Parent login: parent@elovanta.com / parent123');
   console.log('Student login: student@elovanta.com / student123');
+  console.log('Tutor login: tutor@elovanta.com / tutor123');
 
   await mongoose.connection.close();
   process.exit(0);

@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text } from 'react-native';
 import HomeStack from './HomeStack';
 import CoursesStack from './CoursesStack';
+import SessionsStack from './SessionsStack';
 import AccountStack from './AccountStack';
 import LoadingView from '../components/LoadingView';
 import { useAuth } from '../context/AuthContext';
@@ -10,12 +11,14 @@ import { colors } from '../theme/colors';
 
 const Tab = createBottomTabNavigator();
 
-const ICONS = { Home: '🏠', Courses: '📚', Account: '🙂' };
+const ICONS = { Home: '🏠', Courses: '📚', Sessions: '🎥', Account: '🙂' };
 
 const RootNavigator = () => {
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) return <LoadingView label="Starting Elovanta..." />;
+
+  const canSeeSessions = user?.role === 'student' || user?.role === 'tutor';
 
   return (
     <NavigationContainer>
@@ -29,6 +32,9 @@ const RootNavigator = () => {
       >
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="Courses" component={CoursesStack} />
+        {canSeeSessions && (
+          <Tab.Screen name="Sessions" component={SessionsStack} options={{ title: 'Live Classes' }} />
+        )}
         <Tab.Screen name="Account" component={AccountStack} />
       </Tab.Navigator>
     </NavigationContainer>

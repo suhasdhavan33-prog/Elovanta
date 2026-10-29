@@ -18,7 +18,12 @@ const Navbar = () => {
       </Link>
       <div className="navbar-links">
         <Link to="/courses">Courses</Link>
-        {user && <Link to="/dashboard">My Progress</Link>}
+        {(user?.role === 'student' || user?.role === 'parent') && (
+          <Link to="/dashboard">My Progress</Link>
+        )}
+        {(user?.role === 'student' || user?.role === 'tutor') && (
+          <Link to="/sessions">Live Classes</Link>
+        )}
         {user?.role === 'admin' && <Link to="/admin">Admin</Link>}
         {!user && <Link to="/login">Login</Link>}
         {!user && (

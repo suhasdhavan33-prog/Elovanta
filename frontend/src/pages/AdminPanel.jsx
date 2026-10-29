@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import Loading from '../components/Loading';
+import TutorManager from '../components/TutorManager';
 
 const emptyCourse = {
   title: '',
@@ -352,6 +353,8 @@ const AdminPanel = () => {
           )}
         </section>
       </div>
+
+      <TutorManager />
     </div>
   );
 };

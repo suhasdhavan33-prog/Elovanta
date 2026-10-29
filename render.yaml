@@ -16,3 +16,5 @@ services:
         value: 7d
       - key: CLIENT_URL
         sync: false
+      - key: DAILY_API_KEY
+        sync: false

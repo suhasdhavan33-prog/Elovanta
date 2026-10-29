@@ -3,10 +3,19 @@
 The same backend (`../backend`) and cloud database (MongoDB Atlas) power this app — it
 talks to the exact same REST API as the website, just through a native iOS/Android UI
 instead of a browser. Covers: Home, Courses, Course detail, Lessons (with the "🔊 Listen"
-text-to-speech button and quiz), and a Dashboard (student progress / parent view).
+text-to-speech button and quiz), a Dashboard (student progress / parent view), and
+**Live Classes** — scheduled video calls between a tutor and student with a shared
+real-time whiteboard (pen, eraser, colors).
 
 The admin panel (managing courses & lessons) is **web-only** — that's a desktop/content-editing
 task, not something kids or parents need on their phone. Use the website for that.
+
+> ⚠️ **Live video calling will NOT run inside Expo Go.** It uses Daily.co's native video SDK,
+> which requires custom native code that Expo Go's fixed set of built-in modules doesn't
+> include. Everything else in this app (Home, Courses, Lessons, Dashboard, scheduling a
+> session) works fine in Expo Go — only the actual video call screen needs the custom dev
+> build described in step 6 below. The real-time whiteboard is plain JavaScript and works
+> in Expo Go too; only the camera/mic video portion is the exception.
 
 ## Why Expo / React Native instead of separate Swift + Kotlin apps
 
@@ -21,6 +30,9 @@ can even produce the iOS binary without you owning a Mac.
   Store / Play Store) — the fastest way to run this on a real device with no build step
 - The backend running somewhere reachable from your phone (locally on your LAN, or already
   deployed to Render per the main [README](../README.md#deploying-to-the-cloud))
+- For live classes specifically: `DAILY_API_KEY` set in `backend/.env` (see the main README's
+  [Live Classes Setup](../README.md#live-classes-setup-daily-co) section) — the backend
+  returns a clear error if this is missing, instead of the call silently failing
 
 ## 2. Create the Expo project and copy in this code
 
@@ -30,7 +42,8 @@ scaffold a fresh project and let Expo pick versions that match its current SDK:
 ```bash
 npx create-expo-app@latest elovanta-mobile --template blank
 cd elovanta-mobile
-npx expo install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-svg @react-native-async-storage/async-storage expo-speech expo-splash-screen axios
+npx expo install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-svg @react-native-async-storage/async-storage expo-speech expo-splash-screen axios socket.io-client
+npx expo install @daily-co/react-native-daily-js @config-plugins/react-native-webrtc
 npm install -D sharp
 ```
 
@@ -76,8 +89,39 @@ npx expo start
 
 Scan the QR code with the Expo Go app (Android: in-app scanner; iOS: the Camera app) to run
 it on your phone instantly — no Xcode or Android Studio required for this step.
+Everything works here **except the live video call screen** — see step 6.
 
-## 6. Building real app binaries & store hosting — EAS
+## 6. Testing live video classes — a custom dev build
+
+Because Daily's video SDK needs native code, testing an actual video call means building a
+"dev client" — your own custom version of Expo Go that includes that native code. This still
+happens in Expo's cloud (EAS Build), no Mac or Android Studio required:
+
+```bash
+npm install -g eas-cli
+eas login
+eas build:configure
+eas build --profile development --platform android
+```
+
+(Swap `android` for `ios` to also test on iPhone — iOS dev builds need you to register your
+device's UDID with EAS first; the CLI walks you through that.)
+
+When the build finishes, EAS gives you a link to download and install it on your phone —
+install that instead of using Expo Go. Then start the dev server in dev-client mode:
+
+```bash
+npx expo start --dev-client
+```
+
+Open the custom dev build app on your phone and connect to that server the same way you
+would with Expo Go. Now the Live Classes → Join flow will actually start a camera/mic call.
+
+Everything else in this app (Home, Courses, Lessons, Sessions list, scheduling) still works
+the same in this dev build as it did in Expo Go — the dev build is a superset, not a
+replacement for day-to-day development on the rest of the app.
+
+## 7. Building real app binaries & store hosting — EAS
 
 [Expo Application Services (EAS)](https://expo.dev) is Expo's cloud build + submission
 service: it builds your `.apk`/`.aab` (Android) and `.ipa` (iOS) on Expo's servers — so you
@@ -144,6 +188,13 @@ review — this isn't optional polish, it affects whether the app gets approved 
   age, and quiz progress) and, practically, verifiable parental consent for account creation
 - A **parental gate** before anything like external links, purchases, or account deletion is
   common practice even where not strictly required
+- **Live video with an adult tutor adds real child-safety stakes beyond the usual app-store
+  checklist** — this codebase has no tutor vetting, background-check tracking, session
+  recording, or reporting mechanism built in. Before any real child uses a live video
+  session with a tutor, you need a plan for tutor vetting, parental visibility into/consent
+  for each session, and a way to report concerns — this is a child-safety requirement, not
+  just a legal one, and it's on you to build or contract that before launch, not optional
+  code-review feedback
 
 This is a lot to get right for a commercial launch — treat the above as a starting checklist,
 and consider consulting a lawyer familiar with children's digital privacy law before
@@ -162,7 +213,7 @@ mobile/
     api/axios.js             Axios instance, reads EXPO_PUBLIC_API_URL
     context/AuthContext.js   Auth state, persisted via AsyncStorage
     theme/colors.js           Shared color tokens (mirrors the website's CSS variables)
-    components/              Logo, buttons, cards, quiz, speak button, etc.
-    navigation/               Bottom tabs (Home / Courses / Account), each with its own stack
+    components/              Logo, buttons, cards, quiz, speak button, whiteboard, etc.
+    navigation/               Bottom tabs (Home / Courses / Sessions / Account), each with its own stack
     screens/                  One file per screen
 ```

@@ -24,7 +24,7 @@ const register = async (req, res) => {
       name,
       email,
       password,
-      role: role === 'admin' ? 'student' : role || 'student',
+      role: ['student', 'parent'].includes(role) ? role : 'student',
       age,
       parent: parentId,
     });
@@ -37,6 +37,41 @@ const register = async (req, res) => {
       age: user.age,
       token: generateToken(user._id),
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const createTutor = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email and password are required' });
+    }
+
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing) {
+      return res.status(400).json({ message: 'An account with this email already exists' });
+    }
+
+    const tutor = await User.create({ name, email, password, role: 'tutor' });
+
+    res.status(201).json({
+      _id: tutor._id,
+      name: tutor.name,
+      email: tutor.email,
+      role: tutor.role,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getTutors = async (req, res) => {
+  try {
+    const tutors = await User.find({ role: 'tutor' }).select('name email createdAt');
+    res.json(tutors);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -68,4 +103,4 @@ const getMe = async (req, res) => {
   res.json(req.user);
 };
 
-module.exports = { register, login, getMe };
+module.exports = { register, login, getMe, createTutor, getTutors };
